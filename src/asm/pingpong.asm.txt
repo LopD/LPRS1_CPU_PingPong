@@ -1,0 +1,134 @@
+;;THE SHIT WE DISSED
+;;podaci ostaju isti kao i kod Milosa samo posle 0x200 smo ubacili vektor kretanja loptice (memorijska lokacija 6)
+;;1. frame_synch => copy paste iz Milosevog fajla
+;;2. draw everything => po Misicevom nacinu
+;;3. count frames begin => copy paste iz milosevog fajla
+;;4. collision detection => Dusko prepravlja svoj kod
+;;5. movement => dio collision detection-a
+;;6. loop ... da samo loop
+;;7. profit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.data
+8			;;pokazuje na lopticu x poz
+0
+75
+0x100
+0x140
+0x200	;;0x200 je y movement vector od igraca 1 a 0x201 je od 2 igraca
+;;		-------------CONST ABOVE:^^^^^
+;;The shit we can mod
+;;ADD MOVEMENT VECTOR FOR BALLZ (x,y)
+4, 4 ;; početne koorditate loptice
+0, 3 ;; koordinata lijevog objekta
+0, 4
+0, 5
+7, 3 ;; koordinata desnog objekta
+7, 4
+7, 5
+-1,-1
+
+.text
+
+/*
+	Registri
+	R0 - tmp registar
+	R1 - player_1
+	R2 - player_2
+	R3 - color
+	R4 - p_object_and_ball
+	R5 - p_frame_sync
+	R6 - p_pb_dec
+	R7 - p_rgb_matrix
+*/
+
+
+
+default_settings:
+	sub R0,R0,R0
+	inc R0,R0 
+	inc R0,R0
+	inc R0,R0
+	ld R7, R0 ;;
+	inc R0,R0
+	ld R5, R0 ;;
+	inc R0, R0
+	ld R6,R0 ;;
+	inc R3,R3 ;;
+
+frame_sync_rising_edge:
+frame_sync_wait_0:
+	ld R0,R6
+	jmpnz frame_sync_wait_0 
+frame_sync_wait_1:
+	ld R0,R6
+	jmpz frame_sync_wait_1
+
+draw_object_begin:
+	shl R3,R3
+	sub R0,R0,R0
+	ld R4,R0
+draw_object_loop:
+	ld R1, R4 ;; R1<-x
+	jmps draw_object_end
+	inc R4,R4 ;; pomjeri na y
+	ld R2, R4
+	inc R4,R4
+	shl R2,R2
+	shl R2,R2
+	shl R2,R2
+	add R2,R2,R1
+	add R2,R2,R7
+	st R3,R2
+	;;shl R3,R3
+	jmpnz draw_object_loop
+	inc R3,R3
+	jmp draw_object_loop
+draw_object_end:
+
+count_frames_begin:
+	sub R0,R0,R0
+	inc R0,R0
+	ld R1, R0 ;; R1 <- frame_cnt
+	inc R0,R0 ;;
+	ld R2, R0 ;; R2 <- frames_per_heartbeat
+	dec R0,R0
+	inc R1,R1 ;; frame_cnt++
+	sub R2,R2,R1 ;; frame_cnt == frames_per_heartbeat
+	jmpz count_frames_heartbeat
+	st R1, R0 ;; R1 -> frame_cnt
+	jmp frame_sync_rising_edge
+
+count_frames_heartbeat:
+	sub R1,R1,R1
+	st R1,R0
+cout_frames_end:
+
+move_begin:
+	sub R0,R0,R0
+	ld R4,R0
+	ld R1, R4 ;; object x coord
+	inc R0,R0
+	add R0,R0,R1 ;; pomjeri za jedno mjesto na x osi
+	st R0,R4
+	inc R4,R4 ;; pomjeri na y koordinatu koju trenutno ne diramo
+	;; dio koda iznad pomjera lopticu svaki put jedan korak u desno
+	inc R4,R4 
+move_loop:
+
+
+
+
+
